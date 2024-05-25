@@ -20,6 +20,15 @@ export default class Renju {
 
     private readonly THRESHOLD: number = 5;
 
+    private readonly MIN_TESTCASES: number = 1;
+
+    private readonly MAX_TESTCASES: number = 11;
+
+    private readonly errorMessages = {
+        lineLength: `Invalid input line length. The dimensions of board must be ${this.DIMENSIONS}x${this.DIMENSIONS}`,
+        testCasesNum: `Invalid number of testcases. Number of test cases must satisfy the condition (${this.MIN_TESTCASES} <= x <= ${this.MAX_TESTCASES})`
+    }
+
     constructor() {
         this.initReader();
     }
@@ -41,6 +50,8 @@ export default class Renju {
         this.rl.on('line', (line: string) => {
             if (!this.testCasesNum) {
                 this.testCasesNum = parseInt(line);
+                if(!this.testCasesNum || this.testCasesNum < this.MIN_TESTCASES || this.testCasesNum > this.MAX_TESTCASES)
+                    throw Error(this.errorMessages.testCasesNum);
                 return;
             }
             if (this.inputLines.length >= this.testCasesNum * this.DIMENSIONS) {
@@ -56,6 +67,7 @@ export default class Renju {
         for (let i = 0; i < this.testCasesNum; i++) {
             const board: number[][] = [];
             for (let j = i * this.DIMENSIONS; j < (i + 1) * this.DIMENSIONS; j++) {
+                if (this.inputLines[j].length !== this.DIMENSIONS) throw Error(this.errorMessages.lineLength);
                 board.push(this.inputLines[j].split('').map(Number));
             }
 
